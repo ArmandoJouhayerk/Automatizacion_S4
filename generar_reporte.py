@@ -6,7 +6,7 @@ import win32com.client
 
 # configuracion de login y descarga
 USUARIO = "monitor"
-PASSWORD = "DASH123*"
+PASSWORD = "CONTRASEÑA"
 
 URL_KIBANA = "https://172.16.17.55:5601"
 
@@ -210,28 +210,13 @@ try:
             )
 
         correo.To = (
-            "193112-stti@banobras.gob.mx"
+            "ejemplo@mail.com;"
         )
 
         correo.CC = (
-            "aaguilar@omniprinter.mx;"
-            "luz.rivera@atalait.com;"
-            "carlos.lopez@atalait.com;"
-            "christian.aguilar@atalait.com;"
-            "claudia.chapa@atalait.com;"
-            "cristian.carrillo@atalait.com;"
-            "edwin.gil@atalait.com;"
-            "emanuel.zavala@atalait.com;"
-            "jose.mendez@atalait.com;"
-            "lorenzo.reinoso@atalait.com;"
-            "ricardo.alvarez@atalait.com"
+            "ejemplo@mail.com"
+
         )
-
-        # if not correo.Recipients.ResolveAll():
-
-        #     raise Exception(
-        #         "Uno o más destinatarios no pudieron resolverse en Outlook"
-        #     )
 
         correo.Subject = (
             "S4 SERVICIO ADMINISTRADO DE CONECTIVIDAD v4 - "
