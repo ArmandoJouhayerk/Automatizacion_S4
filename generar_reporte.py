@@ -45,18 +45,7 @@ try:
         page = context.new_page()
 
         # login
-        logger.escribir_log("Abriendo Kibana")
-        page.goto(URL_KIBANA)
-
-        page.wait_for_timeout(3000)
-
-        logger.escribir_log("Ingresando credenciales")
-        page.locator("input[type='text']").fill(USUARIO)
-        page.locator("input[type='password']").fill(PASSWORD)
-        page.locator("button").last.click()
-
-        # seleccion de space
-        page.wait_for_timeout(5000)
+        kibana_client.login(page)
 
         logger.escribir_log("Seleccionando espacio Default")
         page.get_by_role(

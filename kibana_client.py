@@ -30,4 +30,36 @@ class KibanaClient:
             self.carpeta_descargas,
             f"S4 SERVICIO ADMINISTRADO DE CONECTIVIDAD v4_{fecha_archivo}.pdf"
         )
+    def login(self,page):
 
+        self.logger.escribir_log(
+            "Abriendo Kibana"
+        )
+
+        page.goto(
+            self.url_kibana
+        )
+
+        page.wait_for_timeout(3000)
+
+        self.logger.escribir_log(
+            "Ingresando credenciales"
+        )
+
+        page.locator(
+            "input[type='text']"
+        ).fill(
+            self.usuario
+        )
+
+        page.locator(
+            "input[type='password']"
+        ).fill(
+            self.password
+        )
+
+        page.locator(
+            "button"
+        ).last.click()
+
+        page.wait_for_timeout(5000)
