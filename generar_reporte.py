@@ -201,21 +201,11 @@ try:
             )
 
         correo.To = (
-            "193112-stti@banobras.gob.mx"
+            "jose.mendez@atalait.com"
         )
 
         correo.CC = (
-            "aaguilar@omniprinter.mx;"
-            "luz.rivera@atalait.com;"
-            "carlos.lopez@atalait.com;"
-            "christian.aguilar@atalait.com;"
-            "claudia.chapa@atalait.com;"
-            "cristian.carrillo@atalait.com;"
-            "edwin.gil@atalait.com;"
-            "emanuel.zavala@atalait.com;"
-            "jose.mendez@atalait.com;"
-            "lorenzo.reinoso@atalait.com;"
-            "ricardo.alvarez@atalait.com"
+            "jose.mendez@atalait.com"
         )
 
         correo.Subject = (
