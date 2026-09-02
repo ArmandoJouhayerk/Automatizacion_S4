@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# Reportes PDF
+Reportes_S4/
+*.pdf
+
+# VS Code
+.vscode/
+
+# Entornos virtuales
+venv/
+.venv/
