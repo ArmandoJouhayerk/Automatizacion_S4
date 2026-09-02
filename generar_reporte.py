@@ -1,11 +1,12 @@
+import os
+import time
+import win32com.client
+
 from playwright.sync_api import sync_playwright
 from datetime import datetime
 from config import Config
 from logger import Logger
 
-import os
-import time
-import win32com.client
 
 # configuracion de login y descarga 
 USUARIO = Config.USUARIO
