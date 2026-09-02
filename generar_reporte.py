@@ -3,22 +3,20 @@ from datetime import datetime
 import os
 import time
 import win32com.client
+import config 
+from config import Config
 
 # inicio de refactorizacion a POO
 
 # configuracion de login y descarga
-USUARIO = "monitor"
-PASSWORD = "CONTRASEÑA"
+USUARIO = Config.USUARIO
+PASSWORD = Config.PASSWORD
 
-URL_KIBANA = "https://172.16.17.55:5601"
+URL_KIBANA = Config.URL_KIBANA
 
-CARPETA_DESCARGAS = (
-    r"C:\Users\jose.mendez\OneDrive - Scontinuidad Latam SA de CV\Documentos\S4Automation\Reportes_S4"
-)
+CARPETA_DESCARGAS = Config.CARPETA_DESCARGAS
 
-ARCHIVO_LOG = (
-    r"C:\Users\jose.mendez\OneDrive - Scontinuidad Latam SA de CV\Documentos\S4Automation\Reporte_S4.log"
-)
+ARCHIVO_LOG = Config.ARCHIVO_LOG
 
 os.makedirs(CARPETA_DESCARGAS, exist_ok=True)
 
@@ -212,12 +210,11 @@ try:
             )
 
         correo.To = (
-            "ejemplo@mail.com;"
+            "jose.mendez@atalait.com"
         )
 
         correo.CC = (
-            "ejemplo@mail.com"
-
+            "jose.mendez@atalait.com"
         )
 
         correo.Subject = (
@@ -242,7 +239,7 @@ try:
             "Reporte agregado al correo"
         )
 
-        correo.Display()
+        correo.Send()
 
         escribir_log(
             "Correo enviado correctamente"
