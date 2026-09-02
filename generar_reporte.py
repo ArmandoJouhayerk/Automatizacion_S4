@@ -4,6 +4,8 @@ import os
 import time
 import win32com.client
 
+# inicio de refactorizacion a POO
+
 # configuracion de login y descarga
 USUARIO = "monitor"
 PASSWORD = "CONTRASEÑA"
