@@ -1,14 +1,13 @@
 from playwright.sync_api import sync_playwright
 from datetime import datetime
+from config import Config
+from logger import Logger
+
 import os
 import time
 import win32com.client
-import config 
-from config import Config
 
-# inicio de refactorizacion a POO
-
-# configuracion de login y descarga
+# configuracion de login y descarga 
 USUARIO = Config.USUARIO
 PASSWORD = Config.PASSWORD
 
@@ -20,20 +19,12 @@ ARCHIVO_LOG = Config.ARCHIVO_LOG
 
 os.makedirs(CARPETA_DESCARGAS, exist_ok=True)
 
-
-def escribir_log(mensaje):
-    with open(
-        ARCHIVO_LOG,
-        "a",
-        encoding="utf-8"
-    ) as log:
-        fecha_log = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-        log.write(f"[{fecha_log}] {mensaje}\n")
-
+# configuracion de logger
+logger = Logger(ARCHIVO_LOG)
 
 try:
 
-    escribir_log("Inicio de ejecución")
+    logger.escribir_log("Inicio de ejecución")
 
     with sync_playwright() as p:
 
@@ -50,12 +41,12 @@ try:
         page = context.new_page()
 
         # login
-        escribir_log("Abriendo Kibana")
+        logger.escribir_log("Abriendo Kibana")
         page.goto(URL_KIBANA)
 
         page.wait_for_timeout(3000)
 
-        escribir_log("Ingresando credenciales")
+        logger.escribir_log("Ingresando credenciales")
         page.locator("input[type='text']").fill(USUARIO)
         page.locator("input[type='password']").fill(PASSWORD)
         page.locator("button").last.click()
@@ -63,7 +54,7 @@ try:
         # seleccion de space
         page.wait_for_timeout(5000)
 
-        escribir_log("Seleccionando espacio Default")
+        logger.escribir_log("Seleccionando espacio Default")
         page.get_by_role(
             "link",
             name="Default"
@@ -72,7 +63,7 @@ try:
         # Ir a dashboards
         page.wait_for_timeout(5000)
 
-        escribir_log("Abriendo lista de Dashboards")
+        logger.escribir_log("Abriendo lista de Dashboards")
 
         page.goto(
             "https://172.16.17.55:5601/app/dashboards#/list",
@@ -81,7 +72,7 @@ try:
 
         page.wait_for_timeout(5000)
 
-        escribir_log("Abriendo Dashboard S4")
+        logger.escribir_log("Abriendo Dashboard S4")
 
         page.get_by_text(
             "S4 SERVICIO ADMINISTRADO DE CONECTIVIDAD",
@@ -91,7 +82,7 @@ try:
         page.wait_for_timeout(10000)
 
         # Filtro today
-        escribir_log("Aplicando filtro Today")
+        logger.escribir_log("Aplicando filtro Today")
 
         page.locator(
             "[aria-label='Date quick select']"
@@ -107,7 +98,7 @@ try:
         page.wait_for_timeout(10000)
 
         # abri share
-        escribir_log("Abriendo Share")
+        logger.escribir_log("Abriendo Share")
 
         page.get_by_text(
             "Share",
@@ -117,7 +108,7 @@ try:
         page.wait_for_timeout(2000)
 
         # Exportar
-        escribir_log("Abriendo Export")
+        logger.escribir_log("Abriendo Export")
 
         page.get_by_text(
             "Export",
@@ -127,21 +118,21 @@ try:
         page.wait_for_timeout(2000)
 
         # Generar PDF
-        escribir_log("Solicitando PDF")
+        logger.escribir_log("Solicitando PDF")
 
         page.get_by_text(
             "Export file",
             exact=True
         ).click()
 
-        escribir_log("Esperando generación del PDF")
+        logger.escribir_log("Esperando generación del PDF")
 
         page.get_by_text(
             "Download report",
             exact=True
         ).wait_for(timeout=300000)
 
-        escribir_log("Reporte listo")
+        logger.escribir_log("Reporte listo")
 
         enlace = page.locator(
             "a:has-text('Download report')"
@@ -164,22 +155,22 @@ try:
 
         descarga.save_as(archivo_pdf)
 
-        escribir_log(
+        logger.escribir_log(
             f"PDF guardado: {archivo_pdf}"
         )
 
-        escribir_log(
+        logger.escribir_log(
             f"Tamaño PDF: {os.path.getsize(archivo_pdf)} bytes"
         )
 
         # Envio de correo con el reporte adjunto
-        escribir_log("Iniciando Outlook")
+        logger.escribir_log("Iniciando Outlook")
 
         outlook = win32com.client.Dispatch(
             "Outlook.Application"
         )
 
-        escribir_log("Outlook iniciado")
+        logger.escribir_log("Outlook iniciado")
 
         correo = None
 
@@ -189,7 +180,7 @@ try:
 
                 correo = outlook.CreateItem(0)
 
-                escribir_log(
+                logger.escribir_log(
                     f"Correo creado en intento {intento + 1}"
                 )
 
@@ -197,7 +188,7 @@ try:
 
             except Exception as error:
 
-                escribir_log(
+                logger.escribir_log(
                     f"CreateItem falló intento {intento + 1}: {error}"
                 )
 
@@ -210,11 +201,21 @@ try:
             )
 
         correo.To = (
-            "jose.mendez@atalait.com"
+            "193112-stti@banobras.gob.mx"
         )
 
         correo.CC = (
-            "jose.mendez@atalait.com"
+            "aaguilar@omniprinter.mx;"
+            "luz.rivera@atalait.com;"
+            "carlos.lopez@atalait.com;"
+            "christian.aguilar@atalait.com;"
+            "claudia.chapa@atalait.com;"
+            "cristian.carrillo@atalait.com;"
+            "edwin.gil@atalait.com;"
+            "emanuel.zavala@atalait.com;"
+            "jose.mendez@atalait.com;"
+            "lorenzo.reinoso@atalait.com;"
+            "ricardo.alvarez@atalait.com"
         )
 
         correo.Subject = (
@@ -235,13 +236,13 @@ try:
             archivo_pdf
         )
 
-        escribir_log(
+        logger.escribir_log(
             "Reporte agregado al correo"
         )
 
         correo.Send()
 
-        escribir_log(
+        logger.escribir_log(
             "Correo enviado correctamente"
         )
 
@@ -249,14 +250,14 @@ try:
         outlook = None
 
 
-        escribir_log(
+        logger.escribir_log(
             "Cerrando navegador"
         )
 
         context.close()
         browser.close()
 
-        escribir_log(
+        logger.escribir_log(
             "Fin de ejecución"
         )
 
@@ -267,7 +268,7 @@ try:
 
 except Exception as e:
 
-    escribir_log(
+    logger.escribir_log(
         f"ERROR GENERAL: {str(e)}"
     )
 
