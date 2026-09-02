@@ -7,6 +7,7 @@ from datetime import datetime
 from config import Config
 from logger import Logger
 from outlook_client import OutlookClient
+from kibana_client import KibanaClient
 
 # configuracion de login y descarga 
 USUARIO = Config.USUARIO
@@ -20,9 +21,10 @@ ARCHIVO_LOG = Config.ARCHIVO_LOG
 
 os.makedirs(CARPETA_DESCARGAS, exist_ok=True)
 
-# configuracion de logger
+# Instancia 
 logger = Logger(ARCHIVO_LOG)
 outlook_client = OutlookClient(logger) 
+kibana_client = KibanaClient(logger, USUARIO, PASSWORD, URL_KIBANA, CARPETA_DESCARGAS)
 
 try:
 
@@ -145,15 +147,7 @@ try:
 
         descarga = download_info.value
 
-        fecha_archivo = datetime.now().strftime(
-            "%d-%m-%Y_%H-%M"
-        )
-
-        # descarga y nombramiento de reporte
-        archivo_pdf = os.path.join(
-            CARPETA_DESCARGAS,
-            f"S4 SERVICIO ADMINISTRADO DE CONECTIVIDAD v4_{fecha_archivo}.pdf"
-        )
+        archivo_pdf = kibana_client.obtener_ruta_pdf()
 
         descarga.save_as(archivo_pdf)
 
@@ -166,9 +160,7 @@ try:
         )
 
         # Envio de correo con el reporte adjunto
-        outlook_client.enviar_reporte(
-            archivo_pdf
-            )
+        outlook_client.enviar_reporte(archivo_pdf)
 
         logger.escribir_log(
             "Cerrando navegador"
