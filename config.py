@@ -2,7 +2,7 @@ class Config:
 
     USUARIO = "monitor"
 
-    PASSWORD = "DASH123*"
+    PASSWORD = "tu_contraseña"
 
     URL_KIBANA = "https://172.16.17.55:5601"
 
