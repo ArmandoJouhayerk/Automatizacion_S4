@@ -15,6 +15,3 @@ Reportes_S4/
 # Entornos virtuales
 venv/
 .venv/
-
-# Archivos de pruebas
-prueba.py
