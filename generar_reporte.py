@@ -6,7 +6,7 @@ from playwright.sync_api import sync_playwright
 from datetime import datetime
 from config import Config
 from logger import Logger
-
+from outlook_client import OutlookClient
 
 # configuracion de login y descarga 
 USUARIO = Config.USUARIO
@@ -22,6 +22,7 @@ os.makedirs(CARPETA_DESCARGAS, exist_ok=True)
 
 # configuracion de logger
 logger = Logger(ARCHIVO_LOG)
+outlook_client = OutlookClient(logger) 
 
 try:
 
@@ -165,81 +166,9 @@ try:
         )
 
         # Envio de correo con el reporte adjunto
-        logger.escribir_log("Iniciando Outlook")
-
-        outlook = win32com.client.Dispatch(
-            "Outlook.Application"
-        )
-
-        logger.escribir_log("Outlook iniciado")
-
-        correo = None
-
-        for intento in range(5):
-
-            try:
-
-                correo = outlook.CreateItem(0)
-
-                logger.escribir_log(
-                    f"Correo creado en intento {intento + 1}"
-                )
-
-                break
-
-            except Exception as error:
-
-                logger.escribir_log(
-                    f"CreateItem falló intento {intento + 1}: {error}"
-                )
-
-                time.sleep(5)
-
-        if correo is None:
-
-            raise Exception(
-                "No fue posible crear el correo en Outlook"
-            )
-
-        correo.To = (
-            "jose.mendez@atalait.com"
-        )
-
-        correo.CC = (
-            "jose.mendez@atalait.com"
-        )
-
-        correo.Subject = (
-            "S4 SERVICIO ADMINISTRADO DE CONECTIVIDAD v4 - "
-            + datetime.now().strftime("%d-%m-%Y")
-        )
-
-        correo.Body = """Buenos días, equipo:
-
-            Se comparte el reporte S4 Servicio Administrado de Conectividad, el cual presenta una operación estable y sin incidencias al momento de la validación.
-
-        Quedo atento a cualquier comentario.
-
-        Saludos.
-        """
-
-        correo.Attachments.Add(
+        outlook_client.enviar_reporte(
             archivo_pdf
-        )
-
-        logger.escribir_log(
-            "Reporte agregado al correo"
-        )
-
-        correo.Send()
-
-        logger.escribir_log(
-            "Correo enviado correctamente"
-        )
-
-        correo = None
-        outlook = None
-
+            )
 
         logger.escribir_log(
             "Cerrando navegador"
