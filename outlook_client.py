@@ -57,12 +57,12 @@ class OutlookClient:
 
         # Remplazar por las direcciones de correo deseadas
         correo.To = (
-            "jose.mendez@atalait.com"
+            "tu_correo@ejemplo.com"
         )
 
         # Remplazar por las direcciones de correo deseadas
         correo.CC = (
-            "jose.mendez@atalait.com"
+            "tu_correo@ejemplo.com"
         )
 
         correo.Subject = (
