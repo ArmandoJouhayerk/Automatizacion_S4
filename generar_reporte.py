@@ -1,9 +1,5 @@
 import os
-import time
-import win32com.client
-
 from playwright.sync_api import sync_playwright
-from datetime import datetime
 from config import Config
 from logger import Logger
 from outlook_client import OutlookClient
@@ -53,93 +49,20 @@ try:
         # Abriendo Analytics>Dashboards
         kibana_client.abrir_dashboard(page)
 
-
-        # Abriendo Analytics>Dashboards>S4 SERVICIO ADMINISTRADO DE CONECTIVIDAD
-        logger.escribir_log("Abriendo Dashboard S4")
-
-        page.get_by_text(
-            "S4 SERVICIO ADMINISTRADO DE CONECTIVIDAD",
-            exact=False
-        ).first.click()
-
-        page.wait_for_timeout(10000)
-
         # Filtro today
-        logger.escribir_log("Aplicando filtro Today")
+        kibana_client.aplicar_filtro_today(page)
 
-        page.locator(
-            "[aria-label='Date quick select']"
-        ).click()
+        # Abrir Share
+        kibana_client.abrir_share(page)
 
-        page.wait_for_timeout(2000)
+        # Abrir Export
+        kibana_client.abrir_export(page)
 
-        page.get_by_text(
-            "Today",
-            exact=True
-        ).click()
+        archivo_pdf = kibana_client.exportar_pdf(page)
 
-        page.wait_for_timeout(10000)
-
-        # Seleccionando Share
-        logger.escribir_log("Abriendo Share")
-
-        page.get_by_text(
-            "Share",
-            exact=True
-        ).click()
-
-        page.wait_for_timeout(2000)
-
-        # Exportar
-        logger.escribir_log("Abriendo Export")
-
-        page.get_by_text(
-            "Export",
-            exact=True
-        ).click()
-
-        page.wait_for_timeout(2000)
-
-        # Generar PDF
-        logger.escribir_log("Solicitando PDF")
-
-        page.get_by_text(
-            "Export file",
-            exact=True
-        ).click()
-
-        logger.escribir_log("Esperando generación del PDF")
-
-        page.get_by_text(
-            "Download report",
-            exact=True
-        ).wait_for(timeout=300000)
-
-        logger.escribir_log("Reporte listo")
-
-        enlace = page.locator(
-            "a:has-text('Download report')"
+        outlook_client.enviar_reporte(
+            archivo_pdf
         )
-
-        with page.expect_download(timeout=300000) as download_info:
-            enlace.click()
-
-        descarga = download_info.value
-
-        archivo_pdf = kibana_client.obtener_ruta_pdf()
-
-        descarga.save_as(archivo_pdf)
-
-        logger.escribir_log(
-            f"PDF guardado: {archivo_pdf}"
-        )
-
-        logger.escribir_log(
-            f"Tamaño PDF: {os.path.getsize(archivo_pdf)} bytes"
-        )
-
-        # Envio de correo con el reporte adjunto
-        outlook_client.enviar_reporte(archivo_pdf)
 
         logger.escribir_log(
             "Cerrando navegador"
