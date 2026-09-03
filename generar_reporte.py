@@ -1,9 +1,9 @@
 import os
-from playwright.sync_api import sync_playwright
 from config import Config
 from logger import Logger
 from outlook_client import OutlookClient
 from kibana_client import KibanaClient
+from reporte_s4 import ReporteS4
 
 # configuracion de login y descarga 
 USUARIO = Config.USUARIO
@@ -17,73 +17,49 @@ ARCHIVO_LOG = Config.ARCHIVO_LOG
 
 os.makedirs(CARPETA_DESCARGAS, exist_ok=True)
 
-# Instancia 
+# Inicialización de logger y clientes
 logger = Logger(ARCHIVO_LOG)
-outlook_client = OutlookClient(logger) 
-kibana_client = KibanaClient(logger, USUARIO, PASSWORD, URL_KIBANA, CARPETA_DESCARGAS)
 
-try:
+outlook_client = OutlookClient(logger)
 
-    logger.escribir_log("Inicio de ejecución")
+kibana_client = KibanaClient(
+    logger, 
+    USUARIO, 
+    PASSWORD, 
+    URL_KIBANA, 
+    CARPETA_DESCARGAS
+    )
 
-    with sync_playwright() as p:
+reporte_s4 = ReporteS4(
+    kibana_client,
+    outlook_client,
+    logger
+    )
 
-        browser = p.chromium.launch(
-            channel="msedge",
-            headless=False
-        )
 
-        context = browser.new_context(
-            ignore_https_errors=True,
-            accept_downloads=True
-        )
+# Función principal
+def main():
 
-        page = context.new_page()
-
-        # login
-        kibana_client.login(page)
-
-        # Seleccion de espacio Default
-        kibana_client.seleccionar_espacio(page)
-
-        # Abriendo Analytics>Dashboards
-        kibana_client.abrir_dashboard(page)
-
-        # Filtro today
-        kibana_client.aplicar_filtro_today(page)
-
-        # Abrir Share
-        kibana_client.abrir_share(page)
-
-        # Abrir Export
-        kibana_client.abrir_export(page)
-
-        archivo_pdf = kibana_client.exportar_pdf(page)
-
-        outlook_client.enviar_reporte(
-            archivo_pdf
-        )
+    try:
 
         logger.escribir_log(
-            "Cerrando navegador"
+            "Inicio de ejecución"
         )
 
-        context.close()
-        browser.close()
+        reporte_s4.ejecutar()
 
         logger.escribir_log(
             "Fin de ejecución"
         )
 
-        import sys
+    except Exception as e:
 
-        sys.stdout.flush()
-        os._exit(0)
+        logger.escribir_log(
+            f"ERROR GENERAL: {str(e)}"
+        )
 
-except Exception as e:
+        raise
 
-    logger.escribir_log(
-        f"ERROR GENERAL: {str(e)}"
-    )
-
-    raise
+# Punto de entrada del script
+if __name__ == "__main__":
+    main() 

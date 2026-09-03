@@ -202,3 +202,44 @@ class KibanaClient:
         )
 
         return archivo_pdf
+
+    def generar_reporte(self,page):
+
+        self.seleccionar_espacio(page)
+
+        self.abrir_dashboard(page)
+
+        self.aplicar_filtro_today(page)
+
+        self.abrir_share(page)
+
+        self.abrir_export(page)
+
+        return self.exportar_pdf(page)
+
+    def ejecutar(self):
+
+        with sync_playwright() as p:
+
+            browser = p.chromium.launch(
+                channel="msedge",
+                headless=False
+            )
+
+            context = browser.new_context(
+                ignore_https_errors=True,
+                accept_downloads=True
+            )
+
+            page = context.new_page()
+
+            self.login(page)
+
+            archivo_pdf = self.generar_reporte(
+                page
+            )
+
+            context.close()
+            browser.close()
+
+            return archivo_pdf

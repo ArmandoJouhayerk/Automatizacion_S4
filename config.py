@@ -1,5 +1,6 @@
 class Config:
 
+    # Configuración de login y descarga
     USUARIO = "monitor"
 
     PASSWORD = "DASH123*"
@@ -13,3 +14,4 @@ class Config:
     ARCHIVO_LOG = (
         r"C:\Users\jose.mendez\OneDrive - Scontinuidad Latam SA de CV\Documentos\S4Automation\Reporte_S4.log"
     )
+

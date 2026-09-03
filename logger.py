@@ -1,5 +1,6 @@
 from datetime import datetime
 
+# Logger class for logging messages to a file
 class Logger:
     def __init__(self, log_file):
         self.log_file = log_file

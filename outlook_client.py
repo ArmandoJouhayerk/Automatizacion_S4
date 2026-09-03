@@ -9,6 +9,7 @@ class OutlookClient:
 
         self.logger = logger
 
+    # Función para enviar el reporte por correo electrónico
     def enviar_reporte(
         self,
         archivo_pdf
@@ -54,10 +55,12 @@ class OutlookClient:
                 "No fue posible crear el correo en Outlook"
             )
 
+        # Remplazar por las direcciones de correo deseadas
         correo.To = (
             "jose.mendez@atalait.com"
         )
 
+        # Remplazar por las direcciones de correo deseadas
         correo.CC = (
             "jose.mendez@atalait.com"
         )
@@ -68,13 +71,13 @@ class OutlookClient:
         )
 
         correo.Body = """
-Buenos días, equipo:
+    Buenos días, equipo:
 
-Se comparte el reporte S4 Servicio Administrado de Conectividad, el cual presenta una operación estable y sin incidencias al momento de la validación.
+    Se comparte el reporte S4 Servicio Administrado de Conectividad, el cual presenta una operación estable y sin incidencias al    momento de la validación.
 
-Quedo atento a cualquier comentario.
+    Quedo atento a cualquier comentario.
 
-Saludos.
+    Saludos.
 """
 
         correo.Attachments.Add(
