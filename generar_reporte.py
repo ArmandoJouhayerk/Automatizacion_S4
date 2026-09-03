@@ -47,24 +47,14 @@ try:
         # login
         kibana_client.login(page)
 
-        logger.escribir_log("Seleccionando espacio Default")
-        page.get_by_role(
-            "link",
-            name="Default"
-        ).click()
+        # Seleccion de espacio Default
+        kibana_client.seleccionar_espacio(page)
 
-        # Ir a dashboards
-        page.wait_for_timeout(5000)
+        # Abriendo Analytics>Dashboards
+        kibana_client.abrir_dashboard(page)
 
-        logger.escribir_log("Abriendo lista de Dashboards")
 
-        page.goto(
-            "https://172.16.17.55:5601/app/dashboards#/list",
-            wait_until="networkidle"
-        )
-
-        page.wait_for_timeout(5000)
-
+        # Abriendo Analytics>Dashboards>S4 SERVICIO ADMINISTRADO DE CONECTIVIDAD
         logger.escribir_log("Abriendo Dashboard S4")
 
         page.get_by_text(
@@ -90,7 +80,7 @@ try:
 
         page.wait_for_timeout(10000)
 
-        # abri share
+        # Seleccionando Share
         logger.escribir_log("Abriendo Share")
 
         page.get_by_text(
